@@ -1,0 +1,145 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Horoscope</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="number"], select, button {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        #tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .tech-tag {
+            margin: 5px;
+            padding: 8px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .selected {
+            background-color: #007BFF;
+            color: white;
+        }
+        .results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>IT Horoscope</h1>
+    <form id="horoscope-form">
+        <div class="form-group">
+            <label for="birth-day">Birth Day</label>
+            <input type="number" id="birth-day" name="birth-day" min="1" max="31" required>
+        </div>
+        <div class="form-group">
+            <label for="birth-month">Birth Month</label>
+            <input type="number" id="birth-month" name="birth-month" min="1" max="12" required>
+        </div>
+        <div class="form-group">
+            <label for="birth-year">Birth Year</label>
+            <input type="number" id="birth-year" name="birth-year" min="1900" max="2024" required>
+        </div>
+        <div class="form-group">
+            <label for="position">Position</label>
+            <select id="position" name="position" required>
+                <option value="">Select Position</option>
+                <option value="Developer">Developer</option>
+                <option value="DevOps">DevOps</option>
+                <option value="QA Engineer">QA Engineer</option>
+                <option value="Project Manager">Project Manager</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="tech-stack">Tech Stack</label>
+            <div id="tech-stack">
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">Python</span>
+                <span class="tech-tag">Docker</span>
+                <span class="tech-tag">Kubernetes</span>
+                <span class="tech-tag">AWS</span>
+                <span class="tech-tag">React</span>
+                <span class="tech-tag">Node.js</span>
+            </div>
+            <input type="text" id="custom-tech" placeholder="Enter your own technology">
+        </div>
+        <button type="submit">Get Horoscope</button>
+        <button type="button" id="generate-horoscope">Нашамань мне гороскоп!</button>
+    </form>
+    <div class="results" id="results"></div>
+
+    <script>
+        const techTags = document.querySelectorAll('.tech-tag');
+        const customTechInput = document.getElementById('custom-tech');
+        const form = document.getElementById('horoscope-form');
+        const generateButton = document.getElementById('generate-horoscope');
+        const results = document.getElementById('results');
+
+        techTags.forEach(tag => {
+            tag.addEventListener('click', () => {
+                tag.classList.toggle('selected');
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            displayHoroscope();
+        });
+
+        generateButton.addEventListener('click', async () => {
+            const day = document.getElementById('birth-day').value;
+            const month = document.getElementById('birth-month').value;
+            const year = document.getElementById('birth-year').value;
+            const position = document.getElementById('position').value;
+            const selectedTags = Array.from(document.querySelectorAll('.tech-tag.selected')).map(tag => tag.innerText);
+            const customTech = customTechInput.value ? [customTechInput.value] : [];
+            const techStack = selectedTags.concat(customTech);
+
+            const response = await fetch('/generate-horoscope', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    day,
+                    month,
+                    year,
+                    position,
+                    techStack
+                })
+            });
+
+            const data = await response.json();
+
+            results.innerHTML = `
+                <h2>Your Horoscope</h2>
+                <p><strong>Date of Birth:</strong> ${day}/${month}/${year}</p>
+                <p><strong>Position:</strong> ${position}</p>
+                <p><strong>Tech Stack:</strong> ${techStack.join(', ')}</p>
+                <p><strong>Horoscope:</strong> ${data.horoscope}</p>
+            `;
+        });
+
+        function displayHoroscope() {
+            // Existing horoscope logic
+        }
+    </script>
+</body>
+</html>
