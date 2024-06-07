@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,7 +79,6 @@ html
             </div>
             <input type="text" id="custom-tech" placeholder="Enter your own technology">
         </div>
-        <button type="submit">Get Horoscope</button>
         <button type="button" id="generate-horoscope">Нашамань мне гороскоп!</button>
     </form>
     <div class="results" id="results"></div>
@@ -96,11 +94,6 @@ html
             tag.addEventListener('click', () => {
                 tag.classList.toggle('selected');
             });
-        });
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            displayHoroscope();
         });
 
         generateButton.addEventListener('click', async () => {
